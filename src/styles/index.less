@@ -1,0 +1,136 @@
+:root{
+  --rtt-lineColor: rgba(0, 0, 0, 0.4);
+  --rtt-lineBox-width: 20px;
+  --rtt-expand-color: rgba(0, 0, 0, 0.4);
+}
+
+.rtt {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+  td {
+    padding: 0;
+  }
+}
+
+.rtt-tr {
+  display: flex;
+  .rtt-td-expand,
+  .rtt-td-expand-line,
+  .rtt-td-expand-line-middle,
+  .rtt-td-expand-line-turn,
+  .rtt-td-expand-line-fork {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--rtt-lineBox-width);
+    height: initial;
+    padding: 0;
+  }
+
+  .rtt-td-expand-line::before,
+  .rtt-td-expand-line-middle::before,
+  .rtt-td-expand-line-turn::before,
+  .rtt-td-expand-line-turn::after,
+  .rtt-td-expand-line-fork::before,
+  .rtt-td-expand-line-fork::after {
+    display: inline-block;
+    background-color: var(--rtt-lineColor);
+    content: '';
+  }
+
+  .rtt-td-expand-line::before {
+    width: 1px;
+    height: 100%;
+  }
+  .rtt-td-expand-line-middle::before {
+    width: 100%;
+    height: 1px;
+  }
+
+  .rtt-td-expand-line-turn {
+    position: relative;
+  }
+
+  .rtt-td-expand-line-turn::before {
+    position: absolute;
+    top: 0%;
+    left: calc(50% - 0.5px);
+    width: 1px;
+    height: 50%;
+  }
+  .rtt-td-expand-line-turn::after {
+    position: absolute;
+    top: calc(50% - 0.5px);
+    left: 50%;
+    width: 50%;
+    height: 1px;
+  }
+
+  .rtt-td-expand-line-fork {
+    position: relative;
+  }
+  .rtt-td-expand-line-fork::before {
+    position: absolute;
+    top: 0%;
+    left: calc(50% - 0.5px);
+    width: 1px;
+    height: 100%;
+  }
+  .rtt-td-expand-line-fork::after {
+    position: absolute;
+    top: calc(50% - 0.5px);
+    left: 50%;
+    width: 50%;
+    height: 1px;
+  }
+
+  .rtt-td-expand-box {
+    width: 14px;
+    height: 14px;
+    box-sizing: border-box;
+    border: 1px solid var(--rtt-expand-color);
+    position: relative;
+    cursor: pointer;
+    &::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      line-height: 100%;
+      content: '';
+      width: 60%;
+      height: 1px;
+      background-color: var(--rtt-expand-color);
+      transition: all .3s;
+    }
+    &::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      line-height: 100%;
+      content: '';
+      width: 1px;
+      height: 60%;
+      background-color: var(--rtt-expand-color);
+      transition: transform .3s;
+    }
+  }
+  .rtt-td-expand-box-active {
+    &::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+  }
+
+  .rtt-td {
+    flex: 1;
+    padding: 4px;
+    font-size: 12px;
+    &:hover {
+      background-color: #e1e1fa;
+      transition: background-color .3s;
+      cursor: pointer;
+    }
+  }
+}
