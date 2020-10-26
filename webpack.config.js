@@ -92,10 +92,6 @@ module.exports = () => {
       library: 'reactTreeTh',
       libraryTarget: 'umd',
     },
-    watch: true,
-    watchOptions: {
-      ignored: /node_modules/
-    },
     externals: {
       'react': 'react',
       'react-dom': 'react-dom'
