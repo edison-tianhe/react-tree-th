@@ -1,16 +1,9 @@
-export interface CustomTreeProps {
-  data: any;
-  lineColor?: string;
-  lineBoxWidth?: string;
-  itemRender?: any;
-  onChange?: any;
-  showLine?: boolean;
-}
+import { ReactNode } from "react";
 
 export interface LevelsType {
   key: string;
   value: number;
-}
+};
 
 export interface CustomTreeDataType {
   id?: string;
@@ -18,4 +11,27 @@ export interface CustomTreeDataType {
   expand?: boolean;
   sub?: CustomTreeDataType[];
   [k: string]: any;
-}
+};
+
+export type ExpandStyleType = 'plus' | 'triangle';
+
+export interface RenderLineProps {
+  showLine: boolean;
+  showExpand: boolean;
+  handleExpand: (data: CustomTreeDataType) => void;
+  expandStyle: ExpandStyleType
+};
+
+export interface CustomTreeProps {
+  data: CustomTreeDataType[];
+  lineColor?: string;
+  lineBoxWidth?: string;
+  itemRender?: (data: CustomTreeDataType, index: number, parentData: CustomTreeDataType[]) => ReactNode;
+  showLine?: boolean;
+  showExpand?: boolean;
+  hoverBgColor?: string;
+  defaultExpand?: boolean;
+  expandStyle?: ExpandStyleType;
+  onChange?: (data: CustomTreeDataType[]) => void;
+  onClick?: (data: CustomTreeDataType) => void;
+};

@@ -1,90 +1,84 @@
-/* eslint-disable no-plusplus */
-import React, { Fragment, useEffect, useState, forwardRef, ForwardRefRenderFunction, useImperativeHandle, ReactNode } from 'react';
-import formatData from './formatData';
-import { CustomTreeProps, CustomTreeDataType, LevelsType } from './types/index';
+import React, {
+  Fragment,
+  useEffect,
+  useState,
+  forwardRef,
+  ForwardRefRenderFunction,
+  useImperativeHandle,
+  ReactNode,
+  useCallback
+} from 'react';
+import {
+  CustomTreeProps,
+  CustomTreeDataType,
+} from '@/types/index';
 
-import styles from './styles/index.less';
+import init from '@/tree/init';
+import renderLine from '@/tree/renderLine';
 
-const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = (props: CustomTreeProps, ref) => {
+import styles from '@/styles/index.less';
+
+const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
+  data,
+  lineColor,
+  lineBoxWidth,
+  itemRender,
+  hoverBgColor,
+  showLine = false,
+  showExpand = true,
+  defaultExpand = true,
+  expandStyle = 'plus',
+  onChange,
+  onClick,
+}: CustomTreeProps, ref) => {
   const [viewData, setViewData] = useState<CustomTreeDataType[]>([]);
 
   useImperativeHandle(ref, () => ({
-    $update: () => { // *强制更新组件
-      setViewData(formatData(viewData));
-      props.onChange(viewData);
+    update: () => { // *强制更新组件
+      setViewData(init(viewData, { defaultExpand }));
+      onChange && onChange(viewData);
     },
   }));
 
-  useEffect(() => {
-    if (props.lineColor) {
-      document.querySelector('body').style.setProperty('--rtt-lineColor', props.lineColor);
+  useEffect(() => { // *初始化组件参数
+    if (lineColor) {
+      document.querySelector('body').style.setProperty('--rtt-lineColor', lineColor);
     }
-    if (props.lineBoxWidth) {
-      document.querySelector('body').style.setProperty('--rtt-lineBox-width', props.lineBoxWidth);
+    if (lineBoxWidth) {
+      document.querySelector('body').style.setProperty('--rtt-lineBox-width', lineBoxWidth);
+    }
+    if (hoverBgColor) {
+      document.querySelector('body').style.setProperty('--rtt-hover-bgColor', hoverBgColor);
     }
   }, []);
 
-  useEffect(() => {
-    setViewData(formatData(props.data));
-  }, [props.data]);
-
-  // *折叠
-  const onJsonDataExpand = (data: CustomTreeDataType) => {
-    // eslint-disable-next-line no-param-reassign
-    data.expand = !data.expand;
-    setViewData([...viewData]);
-  };
+  useEffect(() => { // *初始化组件数据
+    setViewData(init(data, { defaultExpand }));
+  }, [data]);
 
   // *点击
-  const itemHandleClick = (data: CustomTreeDataType) => {
-    console.log(data);
-  }
+  const handleClick = useCallback((data: CustomTreeDataType) => {
+    onClick && onClick(data);
+  }, []);
+
+  // *折叠
+  const handleExpand = useCallback((data: CustomTreeDataType) => {
+    data.expand = !data.expand;
+    setViewData([...viewData]);
+  }, [viewData]);
 
   const subRender = (data: CustomTreeDataType[]): ReactNode => (
     data.map((item: CustomTreeDataType, index: number) => {
-      const { id, value, sub, expand, levels } = item;
-      const expandRender: ReactNode[] = [];
-      
-      (levels as []).forEach((level: LevelsType) => {
-        // ?默认不展示连接线，只能一个占位符
-        if (!props.showLine) {
-          expandRender.push(<td key={level.key} className={styles['rtt-td-expand']} />);
-          return;
-        }
-        // ?生成连接线
-        switch (level.value) {
-          case -1: // *啥都么有
-            expandRender.push(<td key={level.key} className={styles['rtt-td-expand']} />);
-            break;
-          case 0: // *收缩器
-            expandRender.push(<td key={level.key} className={styles['rtt-td-expand']}>
-              <div className={`${styles['rtt-td-expand-box']} ${expand ? styles['rtt-td-expand-box-active']: ''}`} onClick={() => onJsonDataExpand(item)} /></td>);
-            break;
-          case 1: // *竖线
-            expandRender.push(<td key={level.key} className={styles['rtt-td-expand-line']} />);
-            break;
-          case 2: // *横线
-            expandRender.push(<td key={level.key} className={styles['rtt-td-expand-line-middle']} />);
-            break;
-          case 3: // *转折线
-            expandRender.push(<td key={level.key} className={styles['rtt-td-expand-line-turn']} />);
-            break;
-          case 4: // *交叉线
-            expandRender.push(<td key={level.key} className={styles['rtt-td-expand-line-fork']} />);
-            break;
-          default:
-            break;
-        }
-      });
+      const { id, value, sub, expand } = item;
 
       return (
         <Fragment key={id}>
           <tr className={styles['rtt-tr']}>
             { /* 单元格连接线 */}
-            {expandRender}
+            {renderLine(item, { showLine, showExpand, handleExpand, expandStyle })}
             { /* 单元格 */}
-            <td className={styles['rtt-td']} onClick={() => itemHandleClick(item)}>
-              {props.itemRender ? props.itemRender(item, index, data) : value}
+            <td className={styles['rtt-td']} onClick={() => handleClick(item)}>
+              {itemRender ? itemRender(item, index, data) : value}
             </td>
           </tr>
           {expand && sub?.length ? subRender(sub) : null}

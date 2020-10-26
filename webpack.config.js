@@ -52,7 +52,10 @@ module.exports = () => {
       ],
     },
     resolve: {
-      extensions: ['.tsx', '.ts', '.js', '.json'],
+      extensions: ['.tsx', '.ts', '.js', '.json', '.less'],
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
     },
   }
 
@@ -68,15 +71,15 @@ module.exports = () => {
       watchOptions: {
         ignored: /node_modules/
       },
-      entry: path.join(__dirname, './example/index.tsx'),
+      entry: path.resolve(__dirname, './example/index.tsx'),
       output: {
         filename: 'js/bundle.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, './dist'),
       },
 
       plugins: [
         new HtmlWebpackPlugin({
-          template: path.join(__dirname, './example/index.html'),
+          template: path.resolve(__dirname, './example/index.html'),
         })
       ]
     }
@@ -85,10 +88,10 @@ module.exports = () => {
   return {
     ...base,
     devtool: false,
-    entry: path.join(__dirname, './src/index.tsx'),
+    entry: path.resolve(__dirname, './src/index.tsx'),
     output: {
       filename: 'index.js',
-      path: path.resolve(__dirname, 'dist'),
+      path: path.resolve(__dirname, './dist'),
       library: 'reactTreeTh',
       libraryTarget: 'umd',
     },
