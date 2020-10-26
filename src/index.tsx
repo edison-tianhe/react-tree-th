@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 import React, { Fragment, useEffect, useState, forwardRef, ForwardRefRenderFunction, useImperativeHandle, ReactNode } from 'react';
 import formatData from './formatData';
-import { CustomTreeProps, CustomTreeDataType, LevelsType } from './data.d';
+import { CustomTreeProps, CustomTreeDataType, LevelsType } from './types/index';
 
 import styles from './styles/index.less';
 

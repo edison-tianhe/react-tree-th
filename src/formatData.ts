@@ -1,4 +1,4 @@
-import { CustomTreeDataType, LevelsType } from './data.d';
+import { CustomTreeDataType, LevelsType } from './types/index';
 
 let keyId = 1; // *自增Id
 

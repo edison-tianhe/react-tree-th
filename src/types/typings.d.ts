@@ -1,4 +1,3 @@
-declare module 'slash2';
 declare module '*.css';
 declare module '*.less';
 declare module '*.scss';
@@ -10,4 +9,3 @@ declare module '*.jpeg';
 declare module '*.gif';
 declare module '*.bmp';
 declare module '*.tiff';
-declare module 'omit.js';

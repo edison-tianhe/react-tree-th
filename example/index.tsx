@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CustomTree from '../src';
+import CustomTree from '../dist';
+// import CustomTree from '../src';
 import data from './data';
 
 const ExampleIndexHtml: React.FC<{}> = (props: any) => {

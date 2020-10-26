@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = () => {
 
@@ -10,27 +9,32 @@ module.exports = () => {
     module: {
       rules: [
         {
-          test: /\.tsx?$/,
-          use: 'ts-loader',
+          test: /\.(ts|tsx)?$/,
+          use: [
+            'babel-loader',
+            'ts-loader'
+          ],
           exclude: /node_modules/,
         },
         {
           test: /\.less$/,
           use: [
-            { loader: MiniCssExtractPlugin.loader, },
+            { loader: 'style-loader', },
             {
               loader: 'css-loader', options: {
                 modules: true
               }
             },
+            { loader: 'postcss-loader' },
             { loader: 'less-loader' },
           ]
         },
         {
           test: /\.css$/,
           use: [
-            { loader: MiniCssExtractPlugin.loader, },
+            { loader: 'style-loader', },
             { loader: 'css-loader' },
+            { loader: 'postcss-loader' },
           ],
         },
         {
@@ -69,16 +73,11 @@ module.exports = () => {
         filename: 'js/bundle.js',
         path: path.resolve(__dirname, 'dist'),
       },
-      
+
       plugins: [
-        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
           template: path.join(__dirname, './example/index.html'),
-        }),
-        new MiniCssExtractPlugin({
-          filename: 'css/[name].[contenthash].css',
-          chunkFilename: 'css/[id].[contenthash].css',
-        }),
+        })
       ]
     }
   }
@@ -90,13 +89,19 @@ module.exports = () => {
     output: {
       filename: 'index.js',
       path: path.resolve(__dirname, 'dist'),
+      library: 'reactTreeTh',
+      libraryTarget: 'umd',
+    },
+    watch: true,
+    watchOptions: {
+      ignored: /node_modules/
+    },
+    externals: {
+      'react': 'react',
+      'react-dom': 'react-dom'
     },
     plugins: [
-      new CleanWebpackPlugin(),
-      new MiniCssExtractPlugin({
-        filename: '[name].[contenthash].css',
-        chunkFilename: '[id].[contenthash].css',
-      }),
+      new CleanWebpackPlugin()
     ]
   }
 }
