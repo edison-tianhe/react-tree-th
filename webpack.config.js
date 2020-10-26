@@ -4,35 +4,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = () => {
-  let devtool = 'inline-source-map';
-  let entry = path.join(__dirname, './example/index.tsx');
-  let HtmlWebpackPluginProps = {
-    template: path.join(__dirname, './example/index.html'),
-  }
-  if (process.env.NODE_ENV === 'production') {
-    devtool = false;
-    entry = path.join(__dirname, './src/index.tsx');
-    HtmlWebpackPluginProps = {
-      title: 'Tree',
-    }
-  }
 
-  return {
+  const base = {
     mode: process.env.NODE_ENV,
-    devtool,
-    devServer: {
-      port: 9527,
-      open: true,
-    },
-    watch: true,
-    watchOptions: {
-      ignored: /node_modules/
-    },
-    entry,
-    output: {
-      filename: 'assets/js/bundle.js',
-      path: path.resolve(__dirname, 'dist'),
-    },
     module: {
       rules: [
         {
@@ -66,7 +40,7 @@ module.exports = () => {
               loader: 'url-loader',
               options: {
                 limit: 8192,
-                name: 'assets/images/[name].[contenthash].[ext]',
+                name: 'images/[name].[contenthash].[ext]',
               },
             },
           ],
@@ -76,12 +50,52 @@ module.exports = () => {
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.json'],
     },
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    return {
+      ...base,
+      devtool: 'inline-source-map',
+      devServer: {
+        port: 9527,
+        open: true,
+      },
+      watch: true,
+      watchOptions: {
+        ignored: /node_modules/
+      },
+      entry: path.join(__dirname, './example/index.tsx'),
+      output: {
+        filename: 'js/bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+      },
+      
+      plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpackPlugin({
+          template: path.join(__dirname, './example/index.html'),
+        }),
+        new MiniCssExtractPlugin({
+          filename: 'css/[name].[contenthash].css',
+          chunkFilename: 'css/[id].[contenthash].css',
+        }),
+      ]
+    }
+  }
+
+  return {
+    ...base,
+    devtool: false,
+    entry: path.join(__dirname, './src/index.tsx'),
+    output: {
+      filename: 'index.js',
+      path: path.resolve(__dirname, 'dist'),
+    },
     plugins: [
       new CleanWebpackPlugin(),
-      new HtmlWebpackPlugin(HtmlWebpackPluginProps),
       new MiniCssExtractPlugin({
-        filename: 'assets/css/[name].[contenthash].css',
-        chunkFilename: 'assets/css/[id].[contenthash].css',
+        filename: '[name].[contenthash].css',
+        chunkFilename: '[id].[contenthash].css',
       }),
     ]
   }
