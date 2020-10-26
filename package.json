@@ -1,16 +1,24 @@
 {
   "name": "react-tree-th",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "simple tree",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve",
     "build": "cross-env NODE_ENV=production webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["react", "tree", "react-tree", "json", "react-json"],
+  "keywords": [
+    "react",
+    "tree",
+    "react-tree",
+    "json",
+    "react-json"
+  ],
   "author": "tianhe",
   "license": "ISC",
   "dependencies": {
