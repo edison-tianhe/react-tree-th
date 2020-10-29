@@ -3,6 +3,22 @@ import { CustomTreeDataType, LevelsType } from '@/types';
 let keyId = 1; // *自增Id
 const keyPrefix = 'rtt-expand-'; //*自增Id前缀
 
+const getExpand = ({
+	expand,
+	isLeaf,
+	defaultExpand
+}: {
+	[key: string]: boolean
+}): boolean => {
+	if (isLeaf) {
+		return false;
+	}
+	if (typeof expand === 'boolean') {
+		return expand;
+	}
+	return defaultExpand;
+};
+
 // # -1 - 啥都么有
 // # 0 - 收缩器
 // # 1 - 竖线
@@ -18,7 +34,7 @@ const init = (
 	},
 	levels: LevelsType[] = [],
 ): CustomTreeDataType[] => data.map((item: CustomTreeDataType, index: number) => {
-	const { id, sub, expand } = item;
+	const { id, sub, expand, isLeaf } = item;
 
 	const newLevels: LevelsType[] = levels.map((level: LevelsType) => {
 		if (level.value === 0 && index + 1 < data.length) {
@@ -35,7 +51,7 @@ const init = (
 		}
 		return level;
 	})
-	if (sub && sub.length) {
+	if ((sub && sub.length) || isLeaf) {
 		newLevels.push({ key: `${keyPrefix}${keyId++}`, value: 0 });
 	} else if (newLevels.length) {
 		newLevels.push({ key: `${keyPrefix}${keyId++}`, value: 2 });
@@ -47,7 +63,7 @@ const init = (
 		...item,
 		id: id || `rtt-format-data-${keyId++}`,
 		levels: newLevels,
-		expand: typeof expand === 'boolean' ? expand : defaultExpand,
+		expand: getExpand({ expand, isLeaf, defaultExpand }),
 		sub: sub && sub.length && init(sub, { defaultExpand }, newLevels)
 	}
 });

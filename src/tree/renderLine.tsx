@@ -5,6 +5,8 @@ import {
   RenderLineProps
 } from '@/types';
 
+import CircleLoad from '@/loading';
+
 import styles from '@/styles/index.less';
 
 interface TreeDataType extends CustomTreeDataType {
@@ -21,18 +23,23 @@ const renderLine = (
     expandStyle,
   }: RenderLineProps
 ): ReactNode[] => {
-  const { levels, expand } = data;
+  const { levels, expand, isLoading } = data;
   
-  const expandRender = (
-    <div
-      className={`
-        ${styles['rtt-td-expand-box']}
-        ${styles[`rtt-td-expand-${expandStyle}`]}
-        ${expand ? styles[`rtt-td-expand-${expandStyle}-active`] : ''}
-      `}
-      onClick={() => handleExpand(data)}
-    />
-  );
+  let expandRender: ReactNode;
+  if (isLoading) {
+    expandRender = <CircleLoad />;
+  } else {
+    expandRender = (
+      <div
+        className={`
+          ${styles['rtt-td-expand-box']}
+          ${styles[`rtt-td-expand-${expandStyle}`]}
+          ${expand ? styles[`rtt-td-expand-${expandStyle}-active`] : ''}
+        `}
+        onClick={() => handleExpand(data)}
+      />
+    );
+  }
 
   return levels.map((level: LevelsType) => {
     // ?默认不展示连接线，只展示一个收缩器

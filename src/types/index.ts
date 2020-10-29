@@ -10,6 +10,8 @@ export interface CustomTreeDataType {
   value: string;
   expand?: boolean;
   sub?: CustomTreeDataType[];
+  isLeaf?: boolean;
+  isLoading?: boolean;
   [k: string]: any;
 };
 
@@ -32,6 +34,7 @@ export interface CustomTreeProps {
   hoverBgColor?: string;
   defaultExpand?: boolean;
   expandStyle?: ExpandStyleType;
+  loadData?: (data: CustomTreeDataType) => Promise<CustomTreeDataType[]>;
   onChange?: (data: CustomTreeDataType[]) => void;
   onClick?: (data: CustomTreeDataType) => void;
 };

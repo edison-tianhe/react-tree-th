@@ -28,6 +28,7 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
   showExpand = true,
   defaultExpand = true,
   expandStyle = 'plus',
+  loadData,
   onChange,
   onClick,
 }: CustomTreeProps, ref) => {
@@ -63,13 +64,32 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
 
   // *折叠
   const handleExpand = useCallback((data: CustomTreeDataType) => {
-    data.expand = !data.expand;
+    const { isLeaf, expand } = data;
+    if (loadData && isLeaf) {
+      data.isLoading = true;
+      loadData(data)
+        .then((res) => {
+          data.isLoading = false;
+          data.isLeaf = false;
+          data.expand = true;
+          data.sub = res;
+          setViewData(init(viewData, { defaultExpand: false }));
+        })
+        .catch(() => {
+          data.isLoading = false;
+          setViewData(init(viewData, { defaultExpand: false }));
+        })
+    } else {
+      data.expand = !expand;
+    }
     setViewData([...viewData]);
   }, [viewData]);
 
   const subRender = (data: CustomTreeDataType[]): ReactNode => (
     data.map((item: CustomTreeDataType, index: number) => {
-      const { id, value, sub, expand } = item;
+      const { id, value, sub, expand, isLeaf } = item;
+      // *是否展示子节点
+      const showSub = expand && !isLeaf && sub?.length;
 
       return (
         <Fragment key={id}>
@@ -81,7 +101,7 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
               {itemRender ? itemRender(item, index, data) : value}
             </td>
           </tr>
-          {expand && sub?.length ? subRender(sub) : null}
+          {showSub ? subRender(sub) : null}
         </Fragment>
       )
     })

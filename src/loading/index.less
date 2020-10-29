@@ -1,0 +1,41 @@
+.loader {
+  font-size: 10px;
+  text-indent: -9999em;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  /* 线性渐变，从左到右，从白色到透明，0％代表起点和100％是终点 */
+  background: linear-gradient(to right, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  position: relative;
+  animation: loading 1.4s infinite linear;
+}
+.loader:before,
+.loader:after{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.loader:before {
+  width: 50%;
+  height: 50%;
+  background: #1a1aff;
+  border-radius: 100% 0 0 0;
+}
+.loader:after {
+  background: #fff;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  margin: auto;
+  bottom: 0;
+  right: 0;
+}
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
