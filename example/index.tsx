@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import CustomTree from '../src';
+import CustomTree from '../dist';
+// import CustomTree from '../src';
 import data from './data';
 
 const ExampleIndexHtml: React.FC<{}> = (props: any) => {
@@ -39,6 +40,7 @@ const ExampleIndexHtml: React.FC<{}> = (props: any) => {
           ref={ref}
           loadData={onLoadData}
           hoverBgColor={false}
+          itemStyle={{ padding: '0px' }}
           onChange={(data) => console.log(data)}
         />
         <CustomTree

@@ -23,7 +23,7 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
   data,
   lineColor = 'rgba(0, 0, 0, 0.4)',
   expandColor = 'rgba(0, 0, 0, 0.4)',
-  lineBoxWidth = '20px',
+  lineBoxWidth = '30px',
   hoverBgColor = '#e1e1fa',
   itemStyle = { padding: '4px' },
   hoverBlock = 'inline',
@@ -42,6 +42,9 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
   useImperativeHandle(ref, () => ({
     update: () => { // *强制更新组件
       setViewData(init(viewData, { defaultExpand }));
+      onChange && onChange(viewData);
+    },
+    change: () => { // *组件数据向上传递
       onChange && onChange(viewData);
     },
   }));
