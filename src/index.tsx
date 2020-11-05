@@ -6,12 +6,13 @@ import React, {
   ForwardRefRenderFunction,
   useImperativeHandle,
   ReactNode,
-  useCallback
+  useCallback,
+  useRef
 } from 'react';
 import {
   CustomTreeProps,
   CustomTreeDataType,
-} from '@/types/index';
+} from './types/index';
 
 import init from '@/tree/init';
 import renderLine from '@/tree/renderLine';
@@ -20,10 +21,13 @@ import styles from '@/styles/index.less';
 
 const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
   data,
-  lineColor,
-  lineBoxWidth,
+  lineColor = 'rgba(0, 0, 0, 0.4)',
+  expandColor = 'rgba(0, 0, 0, 0.4)',
+  lineBoxWidth = '20px',
+  hoverBgColor = '#e1e1fa',
+  itemStyle = { padding: '4px' },
+  hoverBlock = 'inline',
   itemRender,
-  hoverBgColor,
   showLine = false,
   showExpand = true,
   defaultExpand = true,
@@ -32,6 +36,7 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
   onChange,
   onClick,
 }: CustomTreeProps, ref) => {
+  const domRef = useRef<any>();
   const [viewData, setViewData] = useState<CustomTreeDataType[]>([]);
 
   useImperativeHandle(ref, () => ({
@@ -42,16 +47,13 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
   }));
 
   useEffect(() => { // *初始化组件参数
-    if (lineColor) {
-      document.querySelector('body').style.setProperty('--rtt-lineColor', lineColor);
+    if (domRef.current) {
+      domRef.current.style.setProperty('--rtt-lineColor', lineColor);
+      domRef.current.style.setProperty('--rtt-expand-color', expandColor);
+      domRef.current.style.setProperty('--rtt-lineBox-width', lineBoxWidth);
+      domRef.current.style.setProperty('--rtt-hover-bgColor', hoverBgColor);
     }
-    if (lineBoxWidth) {
-      document.querySelector('body').style.setProperty('--rtt-lineBox-width', lineBoxWidth);
-    }
-    if (hoverBgColor) {
-      document.querySelector('body').style.setProperty('--rtt-hover-bgColor', hoverBgColor);
-    }
-  }, []);
+  }, [viewData.length]);
 
   useEffect(() => { // *初始化组件数据
     setViewData(init(data, { defaultExpand }));
@@ -93,11 +95,15 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
 
       return (
         <Fragment key={id}>
-          <tr className={styles['rtt-tr']}>
+          <tr className={`${styles['rtt-tr']} ${hoverBgColor && hoverBlock === 'block' ? styles['rtt-cursor'] : ''}`}>
             { /* 单元格连接线 */}
             {renderLine(item, { showLine, showExpand, handleExpand, expandStyle })}
             { /* 单元格 */}
-            <td className={styles['rtt-td']} onClick={() => handleClick(item)}>
+            <td
+              className={`${styles['rtt-td']} ${hoverBgColor && hoverBlock === 'inline' ? styles['rtt-cursor'] : ''}`}
+              style={itemStyle}
+              onClick={() => handleClick(item)}
+            >
               {itemRender ? itemRender(item, index, data) : value}
             </td>
           </tr>
@@ -109,7 +115,7 @@ const CustomTree: ForwardRefRenderFunction<unknown, CustomTreeProps> = ({
 
   if (viewData.length) {
     return (
-      <table className={styles['rtt']}>
+      <table className={styles['rtt']} ref={domRef}>
         <tbody>
           {subRender(viewData)}
         </tbody>

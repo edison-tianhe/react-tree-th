@@ -12,10 +12,13 @@
 | showLine        |   是否展示连接线   |   `boolean`   |   false     |
 | showExpand        |   是否展示收缩器按钮   |   `boolean`   |   true     |
 | expandStyle        |   收缩器按钮类型   |   `string`   |   plus     |
+| expandColor        |   收缩器按钮颜色   |   `string`   |   rgba(0, 0, 0, 0.4)     |
 | lineColor        |   连接线颜色   |   `string`   |   rgba(0, 0, 0, 0.4)     |
-| hoverBgColor        |   鼠标移入颜色   |   `string`   |   #e1e1fa     |
+| hoverBgColor        |   鼠标移入颜色(传入false则无效果)   |   `string`   |   #e1e1fa     |
+| hoverBlock        |   触发鼠标移入的区域   |   `string`   |   inline     |
 | lineBoxWidth        |    连接区域宽度    |  `string`  |   30px     |
 | itemRender        |    自定义渲染节点    |  `({nodeData, index, parentData}) => ReactNode`  |    -    |
+| itemStyle        |   节点样式   |   `CSSProperties`   |   { padding: '4px' }     |
 | defaultExpand    |    默认是否展开    |  `boolean`  |    true  |
 | loadData    |    异步加载数据(节点必须有isLeaf属性才可以触发)    |  `(nodeData) => Promise`  |    -  |
 | onClick    |    点击事件    |  `function(nodeData)`  |    -  |
@@ -58,4 +61,9 @@
 
 - [x] plus
 - [x] triangle
+
+### HoverBlock Props
+
+- [x] inline
+- [x] block
 

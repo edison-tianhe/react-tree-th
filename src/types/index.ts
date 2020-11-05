@@ -16,6 +16,7 @@ export interface CustomTreeDataType {
 };
 
 export type ExpandStyleType = 'plus' | 'triangle';
+export type HoverBlockType = 'inline' | 'block';
 
 export interface RenderLineProps {
   showLine: boolean;
@@ -28,10 +29,15 @@ export interface CustomTreeProps {
   data: CustomTreeDataType[];
   lineColor?: string;
   lineBoxWidth?: string;
+  hoverBgColor?: string | boolean;
+  expandColor?: string;
+  itemStyle?: {
+    [key: string]: string;
+  };
+  hoverBlock?: HoverBlockType;
   itemRender?: (data: CustomTreeDataType, index: number, parentData: CustomTreeDataType[]) => ReactNode;
   showLine?: boolean;
   showExpand?: boolean;
-  hoverBgColor?: string;
   defaultExpand?: boolean;
   expandStyle?: ExpandStyleType;
   loadData?: (data: CustomTreeDataType) => Promise<CustomTreeDataType[]>;

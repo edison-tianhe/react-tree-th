@@ -12,8 +12,8 @@ const ExampleIndexHtml: React.FC<{}> = (props: any) => {
     }, 3000);
   }, [])
 
-  function onLoadData(data) {
-    return new Promise((resolve) => {
+  function onLoadData() {
+    return new Promise<any>((resolve) => {
       setTimeout(() => {
         resolve([
           {
@@ -37,6 +37,16 @@ const ExampleIndexHtml: React.FC<{}> = (props: any) => {
           showLine
           data={data}
           ref={ref}
+          loadData={onLoadData}
+          hoverBgColor={false}
+          onChange={(data) => console.log(data)}
+        />
+        <CustomTree
+          lineColor="red"
+          showLine
+          data={data}
+          ref={ref}
+          hoverBlock="block"
           loadData={onLoadData}
           onChange={(data) => console.log(data)}
         />
