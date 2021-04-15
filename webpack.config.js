@@ -67,7 +67,6 @@ module.exports = () => {
         port: 9527,
         open: true,
       },
-      watch: true,
       watchOptions: {
         ignored: /node_modules/
       },
@@ -88,7 +87,7 @@ module.exports = () => {
   return {
     ...base,
     devtool: false,
-    entry: path.resolve(__dirname, './src/index.tsx'),
+    entry: path.resolve(__dirname, './src/index.ts'),
     output: {
       filename: 'index.js',
       path: path.resolve(__dirname, './dist'),
@@ -97,7 +96,8 @@ module.exports = () => {
     },
     externals: {
       'react': 'react',
-      'react-dom': 'react-dom'
+      'react-dom': 'react-dom',
+      'react-window': 'react-window',
     },
     plugins: [
       new CleanWebpackPlugin()

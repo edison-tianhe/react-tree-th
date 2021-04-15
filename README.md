@@ -1,6 +1,6 @@
 # 一款基于react的tree组件
 
-#### 这是一款轻量的tree组件,可以异步加载,可以自定义节点,等等功能
+#### 这是一款轻量的tree组件,可以异步加载,可以自定义节点,支持巨量数据渲染等等功能
 
 [Tree Demo](https://codesandbox.io/s/react-tree-th-demo-xe7zx "Tree Demo")
 
@@ -20,6 +20,8 @@
 | itemRender        |    自定义渲染节点    |  `({nodeData, index, parentData}) => ReactNode`  |    -    |
 | itemStyle        |   节点样式   |   `CSSProperties`   |   { padding: '4px' }     |
 | defaultExpand    |    默认是否展开    |  `boolean`  |    true  |
+| height    |    开启虚拟滚动    |  `boolean | number | string`  |    false  |
+| itemSize    |    单行高度    |  `number`  |    24  |
 | loadData    |    异步加载数据(节点必须有isLeaf属性才可以触发)    |  `(nodeData) => Promise`  |    -  |
 | onClick    |    点击事件    |  `function(nodeData)`  |    -  |
 | onChange        |    组件数据变化时触发    |  `function(nodeData)`  |     -  |

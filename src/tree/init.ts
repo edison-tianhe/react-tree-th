@@ -1,4 +1,4 @@
-import { CustomTreeDataType, LevelsType } from '@/types';
+import { ITreeData, ILevels } from '@/type';
 
 let keyId = 1; // *自增Id
 const keyPrefix = 'rtt-expand-'; //*自增Id前缀
@@ -26,17 +26,17 @@ const getExpand = ({
 // # 3 - 转折线
 // # 4 - 交叉线
 const init = (
-	data: CustomTreeDataType[],
+	data: ITreeData[],
 	{
 		defaultExpand
 	}: {
 		defaultExpand: boolean
 	},
-	levels: LevelsType[] = [],
-): CustomTreeDataType[] => data.map((item: CustomTreeDataType, index: number) => {
+	levels: ILevels[] = [],
+): ITreeData[] => data.map((item: ITreeData, index: number) => {
 	const { id, sub, expand, isLeaf } = item;
 
-	const newLevels: LevelsType[] = levels.map((level: LevelsType) => {
+	const newLevels: ILevels[] = levels.map((level: ILevels) => {
 		if (level.value === 0 && index + 1 < data.length) {
 			return { key: `${keyPrefix}${keyId++}`, value: 4 }
 		}

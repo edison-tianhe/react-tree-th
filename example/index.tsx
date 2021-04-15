@@ -1,11 +1,24 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import CustomTree from '../dist';
-// import CustomTree from '../src';
-import data from './data';
+// import CustomTree, { ITreeData, ITreeRef } from '../dist';
+import CustomTree, { ITreeData, ITreeRef } from '../src';
+
+// const data = [
+//   {
+//     value: '1级标题',
+//     isLeaf: true,
+//   },
+// ];
+
+const data = new Array(1000)
+  .fill(true)
+  .map((_, index) => ({
+    value: `${index}级标题`,
+    isLeaf: true,
+  }));
 
 const ExampleIndexHtml: React.FC<{}> = (props: any) => {
-  const ref = useRef<any>();
+  const ref = useRef<ITreeRef>();
 
   useEffect(() => {
     setTimeout(() => {
@@ -13,42 +26,29 @@ const ExampleIndexHtml: React.FC<{}> = (props: any) => {
     }, 3000);
   }, [])
 
-  function onLoadData() {
-    return new Promise<any>((resolve) => {
+  function onLoadData(data: ITreeData) {
+    return new Promise<ITreeData[]>((resolve) => {
       setTimeout(() => {
-        resolve([
-          {
-            value: '二级标题',
-            sub: [
-              {
-                value: '三级标题'
-              }
-            ]
-          }
-        ]);
+        resolve(new Array(1000)
+          .fill(true)
+          .map((_, index) => ({
+            value: `1-${index}级标题`,
+            isLeaf: true,
+          })));
       }, 3000);
     });
   }
-  
+
   return (
     <div>
       <p>默认状态</p>
       <div style={{ width: '500px' }}>
         <CustomTree
-          showLine
+          lineBoxWidth="20px"
+          height={200}
+          expandStyle="triangle"
           data={data}
           ref={ref}
-          loadData={onLoadData}
-          hoverBgColor={false}
-          itemStyle={{ padding: '0px' }}
-          onChange={(data) => console.log(data)}
-        />
-        <CustomTree
-          lineColor="red"
-          showLine
-          data={data}
-          ref={ref}
-          hoverBlock="block"
           loadData={onLoadData}
           onChange={(data) => console.log(data)}
         />
