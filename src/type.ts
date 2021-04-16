@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 export type ExpandStyleType = 'plus' | 'triangle';
 export type HoverBlockType = 'inline' | 'block';
@@ -31,21 +31,21 @@ export interface IRenderLineProps {
 };
 
 export interface ITreeProps {
+  className?: string,
+  style?: React.CSSProperties,
   data: ITreeData[];
   lineColor?: string;
   lineBoxWidth?: string;
   hoverBgColor?: string | boolean;
   expandColor?: string;
-  itemStyle?: {
-    [key: string]: string;
-  };
+  itemStyle?: React.CSSProperties;
   hoverBlock?: HoverBlockType;
   itemRender?: (data: ITreeData, index: number, parentData: ITreeData[]) => ReactNode;
   showLine?: boolean;
   showExpand?: boolean;
   defaultExpand?: boolean;
   expandStyle?: ExpandStyleType;
-  height?: boolean | number | string;
+  height?: boolean | number;
   itemSize?: number;
   loadData?: (data: ITreeData) => Promise<ITreeData[]>;
   onChange?: (data: ITreeData[]) => void;

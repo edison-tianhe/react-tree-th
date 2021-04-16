@@ -8,6 +8,8 @@
 
 |  参数 |  说明   |  类型   |  默认值   |
 | ------------ | ------------ | ------------ | ------------ |
+| className        |   节点类名   |   `string`   |   -     |
+| style        |   节点样式   |   `CSSProperties`   |   -     |
 | data | 数据源 | `array<{id, value, [sub, expand, isLeaf]}>` | - |
 | showLine        |   是否展示连接线   |   `boolean`   |   false     |
 | showExpand        |   是否展示收缩器按钮   |   `boolean`   |   true     |
@@ -17,10 +19,10 @@
 | hoverBgColor        |   鼠标移入颜色(传入false则无效果)   |   `string`   |   #e1e1fa     |
 | hoverBlock        |   触发鼠标移入的区域   |   `string`   |   inline     |
 | lineBoxWidth        |    连接区域宽度    |  `string`  |   30px     |
-| itemRender        |    自定义渲染节点    |  `({nodeData, index, parentData}) => ReactNode`  |    -    |
-| itemStyle        |   节点样式   |   `CSSProperties`   |   { padding: '4px' }     |
+| itemRender        |    自定义渲染节点    |  `(nodeData, index, parentData) => ReactNode`  |    -    |
+| itemStyle        |   节点样式   |   `CSSProperties`   |   { padding: '4px', whiteSpace: 'nowrap' }     |
 | defaultExpand    |    默认是否展开    |  `boolean`  |    true  |
-| height    |    开启虚拟滚动    |  `boolean | number | string`  |    false  |
+| height    |    开启虚拟滚动    |  `boolean | number`  |    false  |
 | itemSize    |    单行高度    |  `number`  |    24  |
 | loadData    |    异步加载数据(节点必须有isLeaf属性才可以触发)    |  `(nodeData) => Promise`  |    -  |
 | onClick    |    点击事件    |  `function(nodeData)`  |    -  |

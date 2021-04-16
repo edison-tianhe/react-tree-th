@@ -13,7 +13,7 @@ import CustomTree, { ITreeData, ITreeRef } from '../src';
 const data = new Array(1000)
   .fill(true)
   .map((_, index) => ({
-    value: `${index}级标题`,
+    value: `${index}级标题${index}级标题${index}级标题${index}级标题${index}级标题`,
     isLeaf: true,
   }));
 
@@ -42,8 +42,9 @@ const ExampleIndexHtml: React.FC<{}> = (props: any) => {
   return (
     <div>
       <p>默认状态</p>
-      <div style={{ width: '500px' }}>
+      <div style={{ width: '200px' }}>
         <CustomTree
+          // style={{ width: '200px' }}
           lineBoxWidth="20px"
           height={200}
           expandStyle="triangle"

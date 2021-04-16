@@ -21,12 +21,14 @@ import renderLine from '@/tree/renderLine';
 import styles from '@/styles/index.less';
 
 const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
+  className,
+  style,
   data,
   lineColor = 'rgba(0, 0, 0, 0.4)',
   expandColor = 'rgba(0, 0, 0, 0.4)',
   lineBoxWidth = '30px',
   hoverBgColor = '#e1e1fa',
-  itemStyle = { padding: '4px' },
+  itemStyle = { padding: '4px', whiteSpace: 'nowrap' },
   hoverBlock = 'inline',
   itemRender,
   showLine = false,
@@ -120,13 +122,13 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   if (viewData.length) {
     const getFlatNodeList = subRender(viewData).flat(Infinity).filter((i: any) => i);
     return (
-      <div className={styles['rtt']} ref={domRef}>
+      <div className={`${styles['rtt']} ${className}`} style={style} ref={domRef}>
         {height ? (
           <List
             height={height as number | string}
             itemCount={getFlatNodeList.length}
             itemSize={itemSize}
-            width="100%"
+            width="auto"
           >
             {({ index, style }) => <div data-index={index} style={style}>{getFlatNodeList[index]}</div>}
           </List>
