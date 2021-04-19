@@ -4,19 +4,28 @@ let keyId = 1; // *自增Id
 const keyPrefix = 'rtt-expand-'; //*自增Id前缀
 
 const getExpand = ({
+	id,
 	expand,
 	isLeaf,
-	defaultExpand
+	defaultExpand,
+	expandedKeys,
 }: {
-	[key: string]: boolean
+	id: string,
+	expand: boolean,
+	isLeaf: boolean,
+	defaultExpand: boolean,
+	expandedKeys: string[],
 }): boolean => {
 	if (isLeaf) {
 		return false;
 	}
-	if (typeof expand === 'boolean') {
+	if (expandedKeys.includes(id)) {
+		return true;
+	} else if (typeof expand === 'boolean') {
 		return expand;
+	} else {
+		return defaultExpand;
 	}
-	return defaultExpand;
 };
 
 // # -1 - 啥都么有
@@ -28,9 +37,11 @@ const getExpand = ({
 const init = (
 	data: ITreeData[],
 	{
-		defaultExpand
+		defaultExpand,
+		expandedKeys,
 	}: {
-		defaultExpand: boolean
+		defaultExpand: boolean,
+		expandedKeys: string[],
 	},
 	levels: ILevels[] = [],
 ): ITreeData[] => data.map((item: ITreeData, index: number) => {
@@ -63,8 +74,8 @@ const init = (
 		...item,
 		id: id || `rtt-format-data-${keyId++}`,
 		levels: newLevels,
-		expand: getExpand({ expand, isLeaf, defaultExpand }),
-		sub: sub && sub.length && init(sub, { defaultExpand }, newLevels)
+		expand: getExpand({ id, expand, isLeaf, defaultExpand, expandedKeys }),
+		sub: sub && sub.length && init(sub, { defaultExpand, expandedKeys }, newLevels)
 	}
 });
 

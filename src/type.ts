@@ -34,6 +34,7 @@ export interface ITreeProps {
   className?: string,
   style?: React.CSSProperties,
   data: ITreeData[];
+  expandedKeys?: string[];
   lineColor?: string;
   lineBoxWidth?: string;
   hoverBgColor?: string | boolean;
@@ -48,6 +49,7 @@ export interface ITreeProps {
   height?: boolean | number;
   itemSize?: number;
   loadData?: (data: ITreeData) => Promise<ITreeData[]>;
+  onExpand?: (data: string[]) => void;
   onChange?: (data: ITreeData[]) => void;
   onClick?: (data: ITreeData) => void;
 };

@@ -24,6 +24,7 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   className,
   style,
   data,
+  expandedKeys = [],
   lineColor = 'rgba(0, 0, 0, 0.4)',
   expandColor = 'rgba(0, 0, 0, 0.4)',
   lineBoxWidth = '30px',
@@ -38,15 +39,17 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   height = false,
   itemSize = 24,
   loadData,
+  onExpand,
   onChange,
   onClick,
 }: ITreeProps, ref) => {
   const domRef = useRef<any>();
+  const keys = useRef<string[]>(expandedKeys);
   const [viewData, setViewData] = useState<ITreeData[]>([]);
 
   useImperativeHandle(ref, () => ({
     update: () => { // *强制更新组件
-      setViewData(init(viewData, { defaultExpand }));
+      setViewData(init(viewData, { defaultExpand, expandedKeys }));
       onChange && onChange(viewData);
     },
     change: () => { // *组件数据向上传递
@@ -64,13 +67,32 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   }, [viewData.length]);
 
   useEffect(() => { // *初始化组件数据
-    setViewData(init(data, { defaultExpand }));
+    setViewData(init(data, { defaultExpand, expandedKeys }));
   }, [data]);
+
+  useEffect(() => { // *初始化组件数据
+    keys.current = expandedKeys;
+  }, [expandedKeys]);
 
   // *点击
   const handleClick = useCallback((data: ITreeData) => {
     onClick && onClick(data);
   }, []);
+
+  const getExpand = (data: ITreeData) => {
+    let result: string[] = [];
+    if (data.expand) {
+      result = [...keys.current, data.id];
+      keys.current = result;
+    } else {
+      const delIndex = keys.current.indexOf(data.id);
+      keys.current.splice(delIndex, 1);
+      result = [...keys.current];
+      keys.current = result;
+    }
+
+    onExpand && onExpand(result);
+  };
 
   // *折叠
   const handleExpand = useCallback((data: ITreeData) => {
@@ -83,14 +105,16 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
           data.isLeaf = false;
           data.expand = true;
           data.sub = res;
-          setViewData(init(viewData, { defaultExpand: false }));
+          setViewData(init(viewData, { defaultExpand: false, expandedKeys }));
+          getExpand(data);
         })
         .catch(() => {
           data.isLoading = false;
-          setViewData(init(viewData, { defaultExpand: false }));
+          setViewData(init(viewData, { defaultExpand: false, expandedKeys }));
         })
     } else {
       data.expand = !expand;
+      getExpand(data);
     }
     setViewData([...viewData]);
   }, [viewData]);

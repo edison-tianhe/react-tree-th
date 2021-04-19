@@ -10,11 +10,17 @@ import CustomTree, { ITreeData, ITreeRef } from '../src';
 //   },
 // ];
 
-const data = new Array(1000)
+const data = new Array(10)
   .fill(true)
   .map((_, index) => ({
+    id: `0-${index}`,
     value: `${index}级标题${index}级标题${index}级标题${index}级标题${index}级标题`,
-    isLeaf: true,
+    sub: new Array(2)
+      .fill(true)
+      .map((_, i) => ({
+        id: `${index}1-${i}`,
+        value: `${i}级标题${i}级标题${i}级标题${i}级标题${i}级标题`,
+      }))
   }));
 
 const ExampleIndexHtml: React.FC<{}> = (props: any) => {
@@ -32,7 +38,8 @@ const ExampleIndexHtml: React.FC<{}> = (props: any) => {
         resolve(new Array(1000)
           .fill(true)
           .map((_, index) => ({
-            value: `1-${index}级标题`,
+            id: `${3}-1-${index}`,
+            value: `3-${index}级标题`,
             isLeaf: true,
           })));
       }, 3000);
@@ -42,14 +49,16 @@ const ExampleIndexHtml: React.FC<{}> = (props: any) => {
   return (
     <div>
       <p>默认状态</p>
-      <div style={{ width: '200px' }}>
+      <div style={{ width: '1000px' }}>
         <CustomTree
-          // style={{ width: '200px' }}
+          height={300}
+          expandedKeys={['0-1', '0-2']}
           lineBoxWidth="20px"
-          height={200}
           expandStyle="triangle"
           data={data}
+          defaultExpand={false}
           ref={ref}
+          onExpand={(keys) => console.log(keys)}
           loadData={onLoadData}
           onChange={(data) => console.log(data)}
         />
