@@ -68,7 +68,7 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
 
   useEffect(() => { // *初始化组件数据
     setViewData(init(data, { defaultExpand, expandedKeys }));
-  }, [data]);
+  }, [data, expandedKeys]);
 
   useEffect(() => { // *初始化组件数据
     keys.current = expandedKeys;
