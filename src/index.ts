@@ -1,13 +1,15 @@
-import Tree from './tree';
+import Tree from './tree/Tree';
 
-export {
+export type {
   ExpandStyleType,
   HoverBlockType,
   ILevels,
-  ITreeData,
+  ITreeDataBase,
+  TreeData,
+  FormatData,
   IRenderLineProps,
   ITreeProps,
   ITreeRef,
-} from './type';
+} from './types/type';
 
 export default Tree;

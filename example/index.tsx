@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-// import CustomTree, { ITreeData, ITreeRef } from '../dist';
-import CustomTree, { ITreeData, ITreeRef } from '../src';
+// import CustomTree, { ITreeDataBase, ITreeRef } from '../dist';
+import CustomTree, { ITreeDataBase, ITreeRef } from '../src';
 
 // const data = [
 //   {
@@ -20,6 +20,7 @@ const data = new Array(10)
       .map((_, i) => ({
         id: `${index}1-${i}`,
         value: `${i}级标题${i}级标题${i}级标题${i}级标题${i}级标题`,
+        isLeaf: true,
       }))
   }));
 
@@ -32,16 +33,18 @@ const ExampleIndexHtml: React.FC<{}> = (props: any) => {
     }, 3000);
   }, [])
 
-  function onLoadData(data: ITreeData) {
-    return new Promise<ITreeData[]>((resolve) => {
+  function onLoadData(data: ITreeDataBase) {
+    return new Promise<ITreeDataBase[]>((resolve) => {
       setTimeout(() => {
-        resolve(new Array(1000)
-          .fill(true)
-          .map((_, index) => ({
-            id: `${3}-1-${index}`,
-            value: `3-${index}级标题`,
-            isLeaf: true,
-          })));
+        resolve(
+          new Array(1000)
+            .fill(true)
+            .map((_, index) => ({
+              id: `${3}-1-${index}`,
+              value: `3-${index}级标题`,
+              isLeaf: true,
+            }))
+        );
       }, 3000);
     });
   }

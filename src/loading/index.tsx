@@ -2,11 +2,11 @@ import React, {
   FunctionComponent
 } from 'react';
 
-import styles from './index.less';
+import './index.less';
 
 const CircleLoad: FunctionComponent<{}> = () => {
   return (
-    <div className={styles.loader}>
+    <div className="loader">
     </div>
   )
 };

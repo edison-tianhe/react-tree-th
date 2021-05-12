@@ -7,18 +7,21 @@
     "jsx": "react",
     "declaration": true,
     "allowJs": true,
-    "removeComments": true,
+    "removeComments": false,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
     "src/**/*",
   ],
   "exclude": [
-    "node_modules", "dist"
+    "node_modules",
+    "dist"
   ]
 }

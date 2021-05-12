@@ -1,7 +1,7 @@
-import { ITreeData, ILevels } from '@/type';
+import { ITreeDataBase, FormatData, ILevels } from '../types/type'
+import { keyPrefix, formatIdPrefix } from './constants';
 
 let keyId = 1; // *自增Id
-const keyPrefix = 'rtt-expand-'; //*自增Id前缀
 
 const getExpand = ({
 	id,
@@ -11,15 +11,15 @@ const getExpand = ({
 	expandedKeys,
 }: {
 	id: string,
-	expand: boolean,
+	expand: boolean | undefined | null,
 	isLeaf: boolean,
 	defaultExpand: boolean,
-	expandedKeys: string[],
+	expandedKeys?: string[],
 }): boolean => {
 	if (isLeaf) {
 		return false;
 	}
-	if (expandedKeys.includes(id)) {
+	if (expandedKeys && expandedKeys.includes(id)) {
 		return true;
 	} else if (typeof expand === 'boolean') {
 		return expand;
@@ -28,25 +28,30 @@ const getExpand = ({
 	}
 };
 
-// # -1 - 啥都么有
-// # 0 - 收缩器
-// # 1 - 竖线
-// # 2 - 横线
-// # 3 - 转折线
-// # 4 - 交叉线
-const init = (
-	data: ITreeData[],
+const formatData = (
+	data: ITreeDataBase[] | FormatData[],
 	{
 		defaultExpand,
 		expandedKeys,
 	}: {
 		defaultExpand: boolean,
-		expandedKeys: string[],
+		expandedKeys?: string[],
 	},
 	levels: ILevels[] = [],
-): ITreeData[] => data.map((item: ITreeData, index: number) => {
-	const { id, sub, expand, isLeaf } = item;
+): FormatData[] => (data as FormatData[]).map((item, index) => {
+	const { id, sub, expand, isLeaf, isLoading } = item,
+		currentId = id || `${formatIdPrefix}${keyId++}`;
 
+	/**
+	 * 生成占位符
+	 * 
+	 ** -1 - 啥都么有
+	 **  0 - 收缩器
+	 **  1 - 竖线
+	 **  2 - 横线
+	 **  3 - 转折线
+	 **  4 - 交叉线
+	 */
 	const newLevels: ILevels[] = levels.map((level: ILevels) => {
 		if (level.value === 0 && index + 1 < data.length) {
 			return { key: `${keyPrefix}${keyId++}`, value: 4 }
@@ -70,13 +75,27 @@ const init = (
 		newLevels.push({ key: `${keyPrefix}${keyId++}`, value: -1 });
 	}
 
-	return {
-		...item,
-		id: id || `rtt-format-data-${keyId++}`,
+	const result: FormatData = {
+		id: currentId,
 		levels: newLevels,
-		expand: getExpand({ id, expand, isLeaf, defaultExpand, expandedKeys }),
-		sub: sub && sub.length && init(sub, { defaultExpand, expandedKeys }, newLevels)
+		isLeaf: !!isLeaf,
+		isLoading: !!isLoading,
+		expand: getExpand({
+			id: currentId,
+			expand,
+			isLeaf: !!isLeaf,
+			defaultExpand,
+			expandedKeys,
+		}),
+		sub: [],
+		_source: item._source ? item._source : item as unknown as ITreeDataBase,
 	}
+
+	if (sub?.length) {
+		result.sub = formatData(sub, { defaultExpand, expandedKeys }, newLevels)
+	}
+
+	return result;
 });
 
-export default init;
+export default formatData;

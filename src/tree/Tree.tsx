@@ -6,25 +6,23 @@ import React, {
   useImperativeHandle,
   ReactNode,
   useCallback,
-  useRef
+  useRef,
 } from 'react';
 import { FixedSizeList as List } from 'react-window';
-import {
-  ITreeProps,
-  ITreeData,
-  ITreeRef,
-} from '@/type';
+import classnames from 'classnames';
 
-import init from '@/tree/init';
-import renderLine from '@/tree/renderLine';
+import { FormatData, ITreeDataBase, ITreeRef, ITreeProps } from '../types/type';
+import '../styles/index.less';
 
-import styles from '@/styles/index.less';
+import formatData from './Format';
+import renderLine from './Line';
+import { getSource } from './utils';
 
-const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
+const InternalTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   className,
   style,
   data,
-  expandedKeys = [],
+  expandedKeys = false,
   lineColor = 'rgba(0, 0, 0, 0.4)',
   expandColor = 'rgba(0, 0, 0, 0.4)',
   lineBoxWidth = '30px',
@@ -43,17 +41,34 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   onChange,
   onClick,
 }: ITreeProps, ref) => {
-  const domRef = useRef<any>();
-  const keys = useRef<string[]>(expandedKeys);
-  const [viewData, setViewData] = useState<ITreeData[]>([]);
+  const domRef = useRef<HTMLDivElement>(null);
+  const keys = useRef<string[]>([]);
+  const [viewData, setViewData] = useState<FormatData[]>([]);
+
+  const subRenderClass = classnames({
+    ['rtt-tr']: true,
+    ['rtt-cursor']: hoverBgColor && hoverBlock === 'block',
+  })
+
+  const subRenderSpanClass = classnames({
+    ['rtt-td']: true,
+    ['rtt-cursor']: hoverBgColor && hoverBlock === 'inline',
+  })
+
+  const TreeClass = classnames({
+    ['rtt']: true,
+    [className as string]: !!className,
+  })
 
   useImperativeHandle(ref, () => ({
     update: () => { // *强制更新组件
-      setViewData(init(viewData, { defaultExpand, expandedKeys }));
-      onChange && onChange(viewData);
+      setViewData(formatData(viewData, { defaultExpand, expandedKeys: keys.current }));
+      setTimeout(() => {
+        onChange && onChange(getSource(viewData));
+      });
     },
     change: () => { // *组件数据向上传递
-      onChange && onChange(viewData);
+      onChange && onChange(getSource(viewData));
     },
   }));
 
@@ -62,30 +77,33 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
       domRef.current.style.setProperty('--rtt-lineColor', lineColor);
       domRef.current.style.setProperty('--rtt-expand-color', expandColor);
       domRef.current.style.setProperty('--rtt-lineBox-width', lineBoxWidth);
-      domRef.current.style.setProperty('--rtt-hover-bgColor', hoverBgColor);
+      domRef.current.style.setProperty('--rtt-hover-bgColor', hoverBgColor as string);
     }
   }, [viewData.length]);
 
   useEffect(() => { // *初始化组件数据
-    setViewData(init(data, { defaultExpand, expandedKeys }));
-  }, [data, expandedKeys]);
+    setViewData(formatData(data, { defaultExpand }));
+  }, [data]);
 
   useEffect(() => { // *初始化组件数据
-    keys.current = expandedKeys;
+    if (expandedKeys) {
+      keys.current = expandedKeys;
+      setViewData(formatData(data, { defaultExpand, expandedKeys: keys.current }));
+    }
   }, [expandedKeys]);
 
   // *点击
-  const handleClick = useCallback((data: ITreeData) => {
+  const handleClick = useCallback((data: ITreeDataBase) => {
     onClick && onClick(data);
   }, []);
 
-  const getExpand = (data: ITreeData) => {
+  const getExpand = (data: FormatData) => {
     let result: string[] = [];
     if (data.expand) {
-      result = [...keys.current, data.id];
+      result = [...keys.current, data.id as string];
       keys.current = result;
     } else {
-      const delIndex = keys.current.indexOf(data.id);
+      const delIndex = keys.current.indexOf(data.id as string);
       keys.current.splice(delIndex, 1);
       result = [...keys.current];
       keys.current = result;
@@ -95,22 +113,22 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   };
 
   // *折叠
-  const handleExpand = useCallback((data: ITreeData) => {
-    const { isLeaf, expand } = data;
+  const handleExpand = useCallback((data: FormatData) => {
+    const { isLeaf, expand, _source, levels } = data;
     if (loadData && isLeaf) {
       data.isLoading = true;
-      loadData(data)
+      loadData(_source)
         .then((res) => {
           data.isLoading = false;
           data.isLeaf = false;
           data.expand = true;
-          data.sub = res;
-          setViewData(init(viewData, { defaultExpand: false, expandedKeys }));
+          data.sub = formatData(res, { defaultExpand: false, expandedKeys: keys.current }, levels);
+          setViewData([...viewData]);
           getExpand(data);
         })
         .catch(() => {
           data.isLoading = false;
-          setViewData(init(viewData, { defaultExpand: false, expandedKeys }));
+          setViewData([...viewData]);
         })
     } else {
       data.expand = !expand;
@@ -119,26 +137,26 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
     setViewData([...viewData]);
   }, [viewData]);
 
-  const subRender = (data: ITreeData[]): ReactNode[] => (
-    data.map((item: ITreeData, index: number) => {
-      const { id, value, sub, expand, isLeaf } = item;
+  const subRender = (data: FormatData[]): ReactNode[] => (
+    data.map((item: FormatData, index: number) => {
+      const { id, sub, expand, isLeaf, _source, levels } = item;
       // *是否展示子节点
       const showSub = expand && !isLeaf && sub?.length;
 
       return [
-        <div key={id} className={`${styles['rtt-tr']} ${hoverBgColor && hoverBlock === 'block' ? styles['rtt-cursor'] : ''}`}>
+        <div key={id} className={subRenderClass}>
           { /* 单元格连接线 */}
           {renderLine(item, { showLine, showExpand, handleExpand, expandStyle })}
           { /* 单元格 */}
           <span
-            className={`${styles['rtt-td']} ${hoverBgColor && hoverBlock === 'inline' ? styles['rtt-cursor'] : ''}`}
+            className={subRenderSpanClass}
             style={itemStyle}
-            onClick={() => handleClick(item)}
+            onClick={() => handleClick(_source)}
           >
-            {itemRender ? itemRender(item, index, data) : value}
+            {itemRender ? itemRender(_source, index, getSource(data), levels.length) : _source.value}
           </span>
         </div>,
-        showSub ? subRender(sub) : null
+        showSub ? subRender(sub as FormatData[]) : null
       ]
     })
   );
@@ -146,7 +164,7 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   if (viewData.length) {
     const getFlatNodeList = subRender(viewData).flat(Infinity).filter((i: any) => i);
     return (
-      <div className={`${styles['rtt']} ${className}`} style={style} ref={domRef}>
+      <div className={TreeClass} style={style} ref={domRef}>
         {height ? (
           <List
             height={height as number | string}
@@ -163,4 +181,4 @@ const CustomTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   return null;
 };
 
-export default forwardRef(CustomTree);
+export default forwardRef<ITreeRef, ITreeProps>(InternalTree);
