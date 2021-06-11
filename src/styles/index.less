@@ -77,7 +77,7 @@
     width: 50%;
     height: 1px;
   }
-  
+
   .rtt-td {
     flex: 1;
     font-size: 12px;
@@ -86,7 +86,7 @@
 .rtt-cursor {
   &:hover {
     background-color: var(--rtt-hover-bgColor);
-    transition: background-color .3s;
+    transition: background-color 0.3s;
     cursor: pointer;
   }
 }
@@ -100,7 +100,8 @@
 }
 @{rte}-plus {
   border: 1px solid var(--rtt-expand-color);
-  &::before, &::after {
+  &::before,
+  &::after {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -108,7 +109,7 @@
     line-height: 100%;
     content: '';
     background-color: var(--rtt-expand-color);
-    transition: transform .3s;
+    transition: transform 0.3s;
   }
   &::before {
     width: 60%;
@@ -138,7 +139,7 @@
     border-right: 5px solid transparent;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    transition: transform .3s;
+    transition: transform 0.3s;
   }
 }
 @{rte}-triangle-active {

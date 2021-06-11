@@ -1,0 +1,9 @@
+doc:
+  tags: 
+    - docs
+  only:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /docs/
+  script:
+    - pwd
+    - tmdoc 

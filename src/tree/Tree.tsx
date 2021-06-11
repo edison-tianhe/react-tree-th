@@ -18,29 +18,32 @@ import formatData from './Format';
 import renderLine from './Line';
 import { getSource } from './utils';
 
-const InternalTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
-  className,
-  style,
-  data,
-  expandedKeys = false,
-  lineColor = 'rgba(0, 0, 0, 0.4)',
-  expandColor = 'rgba(0, 0, 0, 0.4)',
-  lineBoxWidth = '30px',
-  hoverBgColor = '#e1e1fa',
-  itemStyle = { padding: '4px', whiteSpace: 'nowrap' },
-  hoverBlock = 'inline',
-  itemRender,
-  showLine = false,
-  showExpand = true,
-  defaultExpand = true,
-  expandStyle = 'plus',
-  height = false,
-  itemSize = 24,
-  loadData,
-  onExpand,
-  onChange,
-  onClick,
-}: ITreeProps, ref) => {
+const InternalTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = (
+  {
+    className,
+    style,
+    data,
+    expandedKeys = false,
+    lineColor = 'rgba(0, 0, 0, 0.4)',
+    expandColor = 'rgba(0, 0, 0, 0.4)',
+    lineBoxWidth = '30px',
+    hoverBgColor = '#e1e1fa',
+    itemStyle = { padding: '4px', whiteSpace: 'nowrap' },
+    hoverBlock = 'inline',
+    itemRender,
+    showLine = false,
+    showExpand = true,
+    defaultExpand = true,
+    expandStyle = 'plus',
+    height = false,
+    itemSize = 24,
+    loadData,
+    onExpand,
+    onChange,
+    onClick,
+  }: ITreeProps,
+  ref,
+) => {
   const domRef = useRef<HTMLDivElement>(null);
   const keys = useRef<string[]>([]);
   const [viewData, setViewData] = useState<FormatData[]>([]);
@@ -48,47 +51,59 @@ const InternalTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   const subRenderClass = classnames({
     ['rtt-tr']: true,
     ['rtt-cursor']: hoverBgColor && hoverBlock === 'block',
-  })
+  });
 
   const subRenderSpanClass = classnames({
     ['rtt-td']: true,
     ['rtt-cursor']: hoverBgColor && hoverBlock === 'inline',
-  })
+  });
 
   const TreeClass = classnames({
     ['rtt']: true,
     [className as string]: !!className,
-  })
+  });
 
   useImperativeHandle(ref, () => ({
-    update: () => { // *强制更新组件
-      setViewData(formatData(viewData, { defaultExpand, expandedKeys: keys.current }));
+    update: () => {
+      // *强制更新组件
+      setViewData(
+        formatData(viewData, { defaultExpand, expandedKeys: keys.current }),
+      );
       setTimeout(() => {
         onChange && onChange(getSource(viewData));
       });
     },
-    change: () => { // *组件数据向上传递
+    change: () => {
+      // *组件数据向上传递
       onChange && onChange(getSource(viewData));
     },
   }));
 
-  useEffect(() => { // *初始化组件参数 因为是直接绑定到dom元素上的 所以需要监听viewData变化
+  useEffect(() => {
+    // *初始化组件参数 因为是直接绑定到dom元素上的 所以需要监听viewData变化
     if (domRef.current) {
       domRef.current.style.setProperty('--rtt-lineColor', lineColor);
       domRef.current.style.setProperty('--rtt-expand-color', expandColor);
       domRef.current.style.setProperty('--rtt-lineBox-width', lineBoxWidth);
-      domRef.current.style.setProperty('--rtt-hover-bgColor', hoverBgColor as string);
+      domRef.current.style.setProperty(
+        '--rtt-hover-bgColor',
+        hoverBgColor as string,
+      );
     }
   }, [viewData.length]);
 
-  useEffect(() => { // *初始化组件数据
+  useEffect(() => {
+    // *初始化组件数据
     setViewData(formatData(data, { defaultExpand }));
   }, [data]);
 
-  useEffect(() => { // *初始化组件数据
+  useEffect(() => {
+    // *初始化组件数据
     if (expandedKeys) {
       keys.current = expandedKeys;
-      setViewData(formatData(data, { defaultExpand, expandedKeys: keys.current }));
+      setViewData(
+        formatData(data, { defaultExpand, expandedKeys: keys.current }),
+      );
     }
   }, [expandedKeys]);
 
@@ -113,31 +128,38 @@ const InternalTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
   };
 
   // *折叠
-  const handleExpand = useCallback((data: FormatData) => {
-    const { isLeaf, expand, _source, levels } = data;
-    if (loadData && isLeaf) {
-      data.isLoading = true;
-      loadData(_source)
-        .then((res) => {
-          data.isLoading = false;
-          data.isLeaf = false;
-          data.expand = true;
-          data.sub = formatData(res, { defaultExpand: false, expandedKeys: keys.current }, levels);
-          setViewData([...viewData]);
-          getExpand(data);
-        })
-        .catch(() => {
-          data.isLoading = false;
-          setViewData([...viewData]);
-        })
-    } else {
-      data.expand = !expand;
-      getExpand(data);
-    }
-    setViewData([...viewData]);
-  }, [viewData]);
+  const handleExpand = useCallback(
+    (data: FormatData) => {
+      const { isLeaf, expand, _source, levels } = data;
+      if (loadData && isLeaf) {
+        data.isLoading = true;
+        loadData(_source)
+          .then(res => {
+            data.isLoading = false;
+            data.isLeaf = false;
+            data.expand = true;
+            data.sub = formatData(
+              res,
+              { defaultExpand: false, expandedKeys: keys.current },
+              levels,
+            );
+            setViewData([...viewData]);
+            getExpand(data);
+          })
+          .catch(() => {
+            data.isLoading = false;
+            setViewData([...viewData]);
+          });
+      } else {
+        data.expand = !expand;
+        getExpand(data);
+      }
+      setViewData([...viewData]);
+    },
+    [viewData],
+  );
 
-  const subRender = (data: FormatData[]): ReactNode[] => (
+  const subRender = (data: FormatData[]): ReactNode[] =>
     data.map((item: FormatData, index: number) => {
       const { id, sub, expand, isLeaf, _source, levels } = item;
       // *是否展示子节点
@@ -145,24 +167,32 @@ const InternalTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
 
       return [
         <div key={id} className={subRenderClass}>
-          { /* 单元格连接线 */}
-          {renderLine(item, { showLine, showExpand, handleExpand, expandStyle })}
-          { /* 单元格 */}
+          {/* 单元格连接线 */}
+          {renderLine(item, {
+            showLine,
+            showExpand,
+            handleExpand,
+            expandStyle,
+          })}
+          {/* 单元格 */}
           <span
             className={subRenderSpanClass}
             style={itemStyle}
             onClick={() => handleClick(_source)}
           >
-            {itemRender ? itemRender(_source, index, getSource(data), levels.length) : _source.value}
+            {itemRender
+              ? itemRender(_source, index, getSource(data), levels.length)
+              : _source.value}
           </span>
         </div>,
-        showSub ? subRender(sub as FormatData[]) : null
-      ]
-    })
-  );
+        showSub ? subRender(sub as FormatData[]) : null,
+      ];
+    });
 
   if (viewData.length) {
-    const getFlatNodeList = subRender(viewData).flat(Infinity).filter((i: any) => i);
+    const getFlatNodeList = subRender(viewData)
+      .flat(Infinity)
+      .filter((i: any) => i);
     return (
       <div className={TreeClass} style={style} ref={domRef}>
         {height ? (
@@ -172,11 +202,17 @@ const InternalTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = ({
             itemSize={itemSize}
             width="auto"
           >
-            {({ index, style }) => <div data-index={index} style={style}>{getFlatNodeList[index]}</div>}
+            {({ index, style }) => (
+              <div data-index={index} style={style}>
+                {getFlatNodeList[index]}
+              </div>
+            )}
           </List>
-        ) : getFlatNodeList}
+        ) : (
+          getFlatNodeList
+        )}
       </div>
-    )
+    );
   }
   return null;
 };

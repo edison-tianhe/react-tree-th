@@ -6,38 +6,34 @@ import CircleLoad from '../loading';
 
 const renderLine = (
   data: FormatData,
-  {
-    showLine,
-    showExpand,
-    handleExpand,
-    expandStyle,
-  }: IRenderLineProps
+  { showLine, showExpand, handleExpand, expandStyle }: IRenderLineProps,
 ): ReactNode[] => {
-  const { levels, expand, isLoading, } = data;
+  const { levels, expand, isLoading } = data;
 
   const expandRenderClass = classnames({
     ['rtt-td-expand-box']: true,
     [`rtt-td-expand-${expandStyle}`]: true,
     [`rtt-td-expand-${expandStyle}-active`]: !!expand,
-  })
+  });
 
   let expandRender: ReactNode;
   if (isLoading) {
     expandRender = <CircleLoad />;
   } else {
     expandRender = (
-      <div
-        className={expandRenderClass}
-        onClick={() => handleExpand(data)}
-      />
+      <div className={expandRenderClass} onClick={() => handleExpand(data)} />
     );
   }
 
-  return (levels as ILevels[]).map((level) => {
+  return (levels as ILevels[]).map(level => {
     // ?默认不展示连接线，只展示一个收缩器
     if (!showLine && showExpand) {
       if (level.value === 0) {
-        return <span key={level.key} className="rtt-td-expand">{expandRender}</span>
+        return (
+          <span key={level.key} className="rtt-td-expand">
+            {expandRender}
+          </span>
+        );
       }
       return <span key={level.key} className="rtt-td-expand" />;
     }
@@ -52,7 +48,11 @@ const renderLine = (
       case -1: // *啥都么有
         return <span key={level.key} className="rtt-td-expand" />;
       case 0: // *收缩器
-        return <span key={level.key} className="rtt-td-expand">{expandRender}</span>;
+        return (
+          <span key={level.key} className="rtt-td-expand">
+            {expandRender}
+          </span>
+        );
       case 1: // *竖线
         return <span key={level.key} className="rtt-td-expand-line" />;
       case 2: // *横线
@@ -65,6 +65,6 @@ const renderLine = (
         return <span key={level.key} />;
     }
   });
-}
+};
 
 export default renderLine;
