@@ -93,19 +93,13 @@ const InternalTree: ForwardRefRenderFunction<ITreeRef, ITreeProps> = (
   }, [viewData.length]);
 
   useEffect(() => {
-    // *初始化组件数据
-    setViewData(formatData(data, { defaultExpand }));
-  }, [data]);
-
-  useEffect(() => {
-    // *初始化组件数据
     if (expandedKeys) {
       keys.current = expandedKeys;
-      setViewData(
-        formatData(data, { defaultExpand, expandedKeys: keys.current }),
-      );
     }
-  }, [expandedKeys]);
+    setViewData(
+      formatData(data, { defaultExpand, expandedKeys: keys.current }),
+    );
+  }, [data, expandedKeys]);
 
   // *点击
   const handleClick = useCallback((data: ITreeDataBase) => {

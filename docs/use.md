@@ -129,16 +129,20 @@ const dataLine = [
 
 export default () => {
   const [expandedKeys, setExpandedKeys] = useState([]);
+  const [defaultExpand, setDefaultExpand] = useState(false);
 
   const onExpand = expandedKeys => {
-    console.log(expandedKeys);
     setExpandedKeys(expandedKeys);
   };
+
+  setTimeout(() => {
+    setDefaultExpand(true);
+  }, 3000);
   return (
     <ReactTree
-      defaultExpand={false}
+      defaultExpand={defaultExpand}
       showLine
-      expandedKeys={false}
+      expandedKeys={expandedKeys}
       onExpand={onExpand}
       data={dataLine}
       lineBoxWidth="20px"
