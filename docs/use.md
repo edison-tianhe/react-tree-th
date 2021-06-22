@@ -90,6 +90,63 @@ const dataLine = [
 export default () => <ReactTree showLine data={dataLine} lineBoxWidth="20px" />;
 ```
 
+### 受控 expand
+
+```tsx
+import React, { useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
+
+import ReactTree from 'react-tree-th';
+
+const dataLine = [
+  {
+    id: 1,
+    value: '一级标题111',
+    sub: [
+      {
+        id: 2,
+        value: '二级标题',
+        sub: [
+          {
+            id: 3,
+            value: '三级标题',
+          },
+        ],
+      },
+      {
+        id: 4,
+        value: '二级标题',
+        sub: [
+          {
+            id: 5,
+            value: '三级标题',
+          },
+        ],
+      },
+    ],
+  },
+];
+
+export default () => {
+  const [expandedKeys, setExpandedKeys] = useState([]);
+
+  const onExpand = expandedKeys => {
+    console.log(expandedKeys);
+    setExpandedKeys(expandedKeys);
+  };
+  return (
+    <ReactTree
+      defaultExpand={false}
+      showLine
+      expandedKeys={false}
+      onExpand={onExpand}
+      data={dataLine}
+      lineBoxWidth="20px"
+    />
+  );
+};
+```
+
 ### 异步加载
 
 ```tsx

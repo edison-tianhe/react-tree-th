@@ -14,13 +14,12 @@ const getExpand = ({
   expand: boolean | undefined | null;
   isLeaf: boolean;
   defaultExpand: boolean;
-  expandedKeys?: string[];
+  expandedKeys?: string[] | false;
 }): boolean => {
   if (isLeaf) {
     return false;
-  }
-  if (expandedKeys && expandedKeys.includes(id)) {
-    return true;
+  } else if (typeof (expandedKeys as string[])?.length === 'number') {
+    return (expandedKeys as string[]).includes(id);
   } else if (typeof expand === 'boolean') {
     return expand;
   } else {
@@ -35,7 +34,7 @@ const formatData = (
     expandedKeys,
   }: {
     defaultExpand: boolean;
-    expandedKeys?: string[];
+    expandedKeys?: string[] | false;
   },
   levels: ILevels[] = [],
 ): FormatData[] =>
